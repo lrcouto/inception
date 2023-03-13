@@ -1,0 +1,44 @@
+version: "3"
+
+services:
+  #nginx:
+  #  container_name: nginx
+  #  depends_on:
+  #    - wordpress
+  #  build: ./requirements/nginx
+  #  ports:
+  #    - 443:443
+  #  restart: unless-stopped
+  #  networks:
+  #    - inception-network
+
+  #wordpress:
+  #  container_name: wordpress
+  #  depends_on:
+  #    - mariadb
+  #  build:
+  #    context: ./requirements/wordpress
+  #    dockerfile: Dockerfile
+  #  restart: unless-stopped
+  #  env_file:
+  #    - .env
+  #  networks:
+  #    - inception-network
+
+  mariadb:
+    container_name: mariadb
+    build: ./requirements/mariadb
+    networks:
+      - inception-network
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+            - MYSQL_DATABASE=${MYSQL_DATABASE}
+            - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+            - MYSQL_USER=${MYSQL_USER}
+            - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+
+networks:
+  inception-network:
+    driver: bridge
