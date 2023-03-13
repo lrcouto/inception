@@ -12,6 +12,10 @@ RUN			apt-get update && apt-get install -y \
 
 COPY		./tools/start_db.sh /usr/local/bin/
 
+COPY		./conf/mysqld.conf ~/my.cnf
+COPY		./conf/mysqld.conf /etc/mysql/my.cnf
+COPY		./conf/mysqld.conf /etc/my.cnf
+
 EXPOSE		3306
 
 ENTRYPOINT ["start_db.sh"]

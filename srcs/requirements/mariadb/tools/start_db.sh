@@ -1,6 +1,8 @@
 #!/bin/bash
 
-DATABASE_PATH=/var/lib/mysql/$MYSQL_DATABASE
+mysql_install_db
+
+/etc/init.d/mysql start
 
 if [ ! -d "$DATABASE_PATH" ]; then
 	service mysql start
@@ -11,6 +13,7 @@ if [ ! -d "$DATABASE_PATH" ]; then
 		GRANT ALL PRIVILEGES ON $MYSQL_DATABASE.* TO '$MYSQL_USER'@'%';
 		ALTER USER 'root'@'localhost' IDENTIFIED BY '$MYSQL_ROOT_PASSWORD';
 	"
+	
 	mysqladmin -uroot -p$MYSQL_ROOT_PASSWORD shutdown
 fi
 
