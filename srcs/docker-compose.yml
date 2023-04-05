@@ -1,35 +1,45 @@
 version: "3"
 
 services:
-  #nginx:
-  #  container_name: nginx
-  #  depends_on:
-  #    - wordpress
-  #  build: ./requirements/nginx
-  #  ports:
-  #    - 443:443
-  #  restart: unless-stopped
-  #  networks:
-  #    - inception-network
+  nginx:
+    container_name: nginx
+    depends_on:
+      - wordpress
+    build:
+      context: ./requirements/nginx
+      dockerfile: Dockerfile
+    ports:
+      - 443:443
+    volumes:
+      - wordpress_volume:/var/www/html
+    restart: unless-stopped
+    networks:
+      - inception-network
 
-  #wordpress:
-  #  container_name: wordpress
-  #  depends_on:
-  #    - mariadb
-  #  build:
-  #    context: ./requirements/wordpress
-  #    dockerfile: Dockerfile
-  #  restart: unless-stopped
-  #  env_file:
-  #    - .env
-  #  networks:
-  #    - inception-network
+  wordpress:
+    container_name: wordpress
+    depends_on:
+      - mariadb
+    build:
+      context: ./requirements/wordpress
+      dockerfile: Dockerfile
+    volumes:
+      - wordpress_volume:/var/www/html
+    restart: unless-stopped
+    env_file:
+      - .env
+    networks:
+      - inception-network
 
   mariadb:
     container_name: mariadb
-    build: ./requirements/mariadb
+    build:
+      context: ./requirements/mariadb
+      dockerfile: Dockerfile
     networks:
       - inception-network
+    volumes:
+      - mariadb_volume:/var/lib/mysql
     restart: unless-stopped
     env_file:
       - .env
@@ -38,6 +48,20 @@ services:
             - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
             - MYSQL_USER=${MYSQL_USER}
             - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+
+volumes:
+  mariadb_volume:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/lcouto/data/mysql
+      o: bind
+  wordpress_volume:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/lcouto/data/wordpress
+      o: bind 
 
 networks:
   inception-network:
