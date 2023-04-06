@@ -12,6 +12,10 @@
 
 
 all:
+	@sudo mkdir -p /home/lcouto/data/mysql
+	@docker volume create --name dbdata --opt type=none --opt device=/home/lcouto/data/mysql --opt o=bind
+	@sudo mkdir -p /home/lcouto/data/wordpress
+	@docker volume create --name dbdata --opt type=none --opt device=/home/lcouto/data/wordpress --opt o=bind
 	@docker-compose -f ./srcs/docker-compose.yml up -d --build
 
 down:
@@ -35,7 +39,11 @@ list-networks:
 	@docker network ls
 
 clean: down
-	@docker rmi -f $$(docker images -qa);\
-	docker volume rm $$(docker volume ls -q);\
+	@-docker stop `docker ps -qa`
+	@-docker rm `docker ps -qa`
+	@-docker rmi -f `docker images -qa`
+	@-docker volume rm `docker volume ls -q`
+	@sudo rm -rf /home/lcouto/data/wordpress
+	@sudo rm -rf /home/lcouto/data/mysql
 
 .PHONY: all re down clean
