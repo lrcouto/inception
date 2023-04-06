@@ -29,6 +29,11 @@ update-hosts:
 		echo "127.0.0.1 lcouto.42.fr" >> /etc/hosts; \
 	fi
 
+remove-hosts:
+	@if grep -q "lcouto.42.fr" /etc/hosts; then \
+		sudo sed -i '/lcouto.42.fr/d' /etc/hosts; \
+	fi
+
 list:
 	@docker ps -a
 
@@ -39,11 +44,11 @@ list-networks:
 	@docker network ls
 
 clean: down
-	@-docker stop `docker ps -qa`
-	@-docker rm `docker ps -qa`
 	@-docker rmi -f `docker images -qa`
 	@-docker volume rm `docker volume ls -q`
+
+fclean:
 	@sudo rm -rf /home/lcouto/data/wordpress
 	@sudo rm -rf /home/lcouto/data/mysql
 
-.PHONY: all re down clean
+.PHONY: all re down clean fclean
