@@ -4,7 +4,7 @@ RUN			apt-get update && apt-get install -y \
 			apt-utils \
 			mariadb-server \
 			procps \
-			nano \
+			vim \
 			&& mkdir -p /var/run/mysqld \
 			&& chown -R mysql:mysql /var/run/mysqld
 
@@ -15,4 +15,4 @@ EXPOSE		3306
 
 ENTRYPOINT ["start_db.sh"]
 
-CMD			["mysqld", "--bind-address=0.0.0.0"]
+CMD ["mysqld", "--bind-address=0.0.0.0"]

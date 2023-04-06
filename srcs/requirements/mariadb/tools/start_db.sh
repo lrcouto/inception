@@ -1,4 +1,3 @@
-
 #!/bin/sh
 
 DATABASE_PATH=/var/lib/mysql/$MYSQL_DATABASE
@@ -11,7 +10,7 @@ then
 				 ALTER USER 'root'@'localhost' IDENTIFIED BY '$MYSQL_ROOT_PASSWORD'; \
 				 GRANT ALL PRIVILEGES ON $MYSQL_DATABASE.* TO '$MYSQL_USER'@'%';";
 	mysql -uroot -p$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE < wordpress.sql ;
-	mysqladmin -uroot -proot123456 shutdown;
+	mysqladmin -uroot -p$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE shutdown;
 	
 fi
 

@@ -2,34 +2,35 @@ FROM debian:buster
 
 RUN apt-get update && apt-get -y install \
 	wget \
-	curl \
-	bash \
-	php \
-	php-cgi \
-	php-mysql \
-	php-fpm \
-	php-pdo \
-	php-gd php-cli \
-	php-mbstring \
-	redis \
-	php-redis \
-	&& rm -rf /var/lib/apt/lists/*
+	apt-utils \
+	vim \
+	php7.3 \
+	php7.3-fpm \
+	php7.3-opcache \
+	php7.3-cli \
+	php7.3-gd \
+	php7.3-curl \
+	php7.3-mysql \
+	php7.3-mbstring
 
-RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
-  && chmod +x wp-cli.phar \
-  && mv wp-cli.phar /usr/local/bin/wp
+RUN mkdir /run/php && \
+	mkdir -p /var/www/lcouto && \
+	wget https://wordpress.org/latest.tar.gz && \
+	tar -xzvf latest.tar.gz && \
+	rm latest.tar.gz && \
+	mv wordpress /var/www/lcouto/wordpress
 
-COPY ./conf/www.conf /etc/php/7.3/fpm/pool.d/
+COPY conf/ /srcs/
+COPY tools/ /usr/local/bin/
 
-RUN mkdir /run/php
-
-COPY ./tools/start_wordpress.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/start_wordpress.sh
+
+RUN cp /srcs/www.conf /etc/php/7.3/fpm/pool.d/
+
+WORKDIR /var/www/lcouto/wordpress
 
 ENTRYPOINT ["/usr/local/bin/start_wordpress.sh"]
 
-WORKDIR /var/www/html/
-
 EXPOSE 9000
 
-CMD ["/usr/sbin/php-fpm7.3", "-F"]
+CMD ["/usr/sbin/php-fpm7.3", "--nodaemonize"]

@@ -5,45 +5,46 @@ services:
     container_name: nginx
     depends_on:
       - wordpress
-    build:
-      context: ./requirements/nginx
-      dockerfile: Dockerfile
+    build: ./requirements/nginx
     ports:
       - 443:443
     volumes:
-      - wordpress_volume:/var/www/html
+      - wordpress_volume:/var/www/lcouto/wordpress
     restart: unless-stopped
     networks:
       - inception-network
 
   wordpress:
-    container_name: wordpress
     depends_on:
       - mariadb
-    build:
-      context: ./requirements/wordpress
-      dockerfile: Dockerfile
-      args:
-        MYSQL_DATABASE: ${MYSQL_DATABASE}
-        MYSQL_HOSTNAME: ${MYSQL_HOSTNAME}
-        MYSQL_USER: ${MYSQL_USER}
-        MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    build: ./requirements/wordpress
+    image: wordpress
+    container_name: wordpress
+    env_file:
+      - .env
+    environment:
+      - MYSQL_HOSTNAME=${MYSQL_HOSTNAME}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     volumes:
-      - wordpress_volume:/var/www/html
+      - wordpress_volume:/var/www/lcouto/wordpress
     restart: unless-stopped
     networks:
       - inception-network
 
   mariadb:
+    build: ./requirements/mariadb
+    image: mariadb
     container_name: mariadb
-    build:
-      context: ./requirements/mariadb
-      dockerfile: Dockerfile
-      args:
-        MYSQL_DATABASE: ${MYSQL_DATABASE}
-        MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-        MYSQL_USER: ${MYSQL_USER}
-        MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     networks:
       - inception-network
     volumes:
@@ -52,17 +53,9 @@ services:
 
 volumes:
   mariadb_volume:
-    driver: local
-    driver_opts:
-      type: none
-      device: /home/lcouto/data/mysql
-      o: bind
+    external: true
   wordpress_volume:
-    driver: local
-    driver_opts:
-      type: none
-      device: /home/lcouto/data/wordpress
-      o: bind 
+    external: true
 
 networks:
   inception-network:

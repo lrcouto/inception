@@ -13,9 +13,9 @@
 
 all:
 	@sudo mkdir -p /home/lcouto/data/mysql
-	@docker volume create --name dbdata --opt type=none --opt device=/home/lcouto/data/mysql --opt o=bind
+	@docker volume create --name mariadb_volume --opt type=none --opt device=/home/lcouto/data/mysql --opt o=bind
 	@sudo mkdir -p /home/lcouto/data/wordpress
-	@docker volume create --name dbdata --opt type=none --opt device=/home/lcouto/data/wordpress --opt o=bind
+	@docker volume create --name wordpress_volume --opt type=none --opt device=/home/lcouto/data/wordpress --opt o=bind
 	@docker-compose -f ./srcs/docker-compose.yml up -d --build
 
 down:
